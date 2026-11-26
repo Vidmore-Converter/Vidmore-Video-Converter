@@ -1,0 +1,158 @@
+{
+    "app-id": "fr.handbrake.ghb.Plugin.IntelMediaSDK",
+    "branch": "1",
+    "runtime": "fr.handbrake.ghb",
+    "runtime-version": "development",
+    "sdk": "org.gnome.Sdk//51",
+    "build-extension": true,
+    "separate-locales": false,
+    "modules": [
+        {
+            "name": "intel-gmmlib",
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://github.com/intel/gmmlib/archive/refs/tags/intel-gmmlib-22.10.2.tar.gz",
+                    "sha256": "94d0038ef92bb65b86d08f004197c56f8d81f82f9ac7a25c202a88afd653a30b"
+                }
+            ],
+            "buildsystem": "cmake-ninja",
+            "builddir": true,
+            "config-opts": [
+                "-DCMAKE_POLICY_VERSION_MINIMUM=3.10",
+                "-DCMAKE_BUILD_TYPE=Release",
+                "-DCMAKE_INSTALL_LIBDIR=lib"
+            ],
+            "build-options": {
+                "prefix" : "/app/extensions/IntelMediaSDK",
+                "make-args": [
+                    "-v"
+                ],
+                "make-install-args": [
+                    "-v"
+                ],
+                "strip": true
+            }
+        },
+        {
+            "name": "libva",
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://github.com/intel/libva/releases/download/2.24.1/libva-2.24.1.tar.bz2",
+                    "sha256": "eec6050b52876f229bd35e9df17cd31a06785e18e6f7990c445b584628483d67"
+                }
+            ],
+            "no-autogen": false,
+            "config-opts": ["--with-drivers-path=/app/extensions/IntelMediaSDK/lib/dri"],
+            "build-options": {
+                "prefix" : "/app/extensions/IntelMediaSDK",
+                "strip": true
+            }
+        },
+        {
+            "name": "libva-utils",
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://github.com/intel/libva-utils/releases/download/2.24.0/libva-utils-2.24.0.tar.bz2",
+                    "sha256": "7f066b33f369bdfb5d8f7644d623b4263acc230a438ee380473450d687e3faa8"
+                }
+            ],
+            "no-autogen": false,
+            "build-options": {
+                "prefix" : "/app/extensions/IntelMediaSDK",
+                "prepend-pkg-config-path": "/app/extensions/IntelMediaSDK/lib/pkgconfig",
+                "strip": true
+            }
+        },
+        {
+            "name": "intel-media-driver",
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://github.com/intel/media-driver/archive/refs/tags/intel-media-26.3.5.tar.gz",
+                    "sha256": "76f41c06cefc91d57e0b7d366b7a91b8420ec77939326491795f9fb26afca7e7"
+                }
+            ],
+            "buildsystem": "cmake-ninja",
+            "builddir": true,
+            "config-opts": [
+                "-DCMAKE_POLICY_VERSION_MINIMUM=3.10",
+                "-DCMAKE_BUILD_TYPE=Release",
+                "-DCMAKE_INSTALL_LIBDIR=lib",
+                "-DMEDIA_RUN_TEST_SUITE=OFF",
+                "-DENABLE_PRODUCTION_KMD=ON"
+            ],
+            "build-options": {
+                "cxxflags": "-Wno-error=array-bounds=",
+                "prefix" : "/app/extensions/IntelMediaSDK",
+                "prepend-pkg-config-path": "/app/extensions/IntelMediaSDK/lib/pkgconfig",
+                "strip": true
+            }
+        },
+        {
+            "name": "mediasdk",
+            "buildsystem": "cmake-ninja",
+            "builddir": true,
+            "config-opts": [
+                "-DCMAKE_POLICY_VERSION_MINIMUM=3.10",
+                "-DCMAKE_BUILD_TYPE=Release",
+                "-DCMAKE_INSTALL_LIBDIR=lib",
+                "-DBUILD_SAMPLES=OFF",
+                "-DBUILD_TESTS=OFF",
+                "-DBUILD_TOOLS=OFF",
+                "-DBUILD_TESTS=OFF",
+                "-DMFX_ENABLE_SW_FALLBACK=OFF"
+            ],
+            "build-options": {
+                "prefix" : "/app/extensions/IntelMediaSDK",
+                "prepend-pkg-config-path": "/app/extensions/IntelMediaSDK/lib/pkgconfig",
+                "strip": true
+            },
+            "post-install": [
+                "install -Dp -m 644 ${FLATPAK_BUILDER_BUILDDIR}/fr.handbrake.ghb.Plugin.IntelMediaSDK.metainfo.xml --target-directory=${FLATPAK_DEST}/share/metainfo"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://github.com/Intel-Media-SDK/MediaSDK/archive/refs/tags/intel-mediasdk-22.6.5.tar.gz",
+                    "sha256": "3a671cc692da5111c041088f5e32528b4346e122e8a134fad71310c572705106"
+                },
+                {
+                    "type": "patch",
+                    "path": "intel-mediasdk-gcc13.patch"
+                },
+                {
+                    "type": "file",
+                    "path": "fr.handbrake.ghb.Plugin.IntelMediaSDK.metainfo.xml"
+                }
+            ]
+        },
+        {
+            "name": "onevpl-intel-gpu",
+            "buildsystem": "cmake-ninja",
+            "builddir": true,
+            "config-opts": [
+                "-DCMAKE_BUILD_TYPE=Release",
+                "-DCMAKE_INSTALL_LIBDIR=lib"
+            ],
+            "build-options": {
+                "prefix" : "/app/extensions/IntelMediaSDK",
+                "prepend-pkg-config-path": "/app/extensions/IntelMediaSDK/lib/pkgconfig",
+                "strip": true
+            },
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://github.com/intel/vpl-gpu-rt/archive/refs/tags/intel-onevpl-26.3.5.tar.gz",
+                    "sha256": "92867a0f8c09d81419102a61713e9f98dfd2af3fc9c91c6f4fb6d0c784c8e442"
+                },
+                {
+                    "type": "file",
+                    "path": "fr.handbrake.ghb.Plugin.IntelMediaSDK.metainfo.xml"
+                }
+            ]
+        }
+    ]
+}
